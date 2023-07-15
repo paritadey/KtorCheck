@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import com.eparita.ktorcheck.util.Constants.HERO_DATABASE_TABLE
 
 @Entity(tableName = HERO_DATABASE_TABLE)
+@kotlinx.serialization.Serializable
 data class Hero(
     @PrimaryKey(autoGenerate = false)
     val id: Int,
