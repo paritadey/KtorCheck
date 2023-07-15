@@ -8,9 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -19,14 +17,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.eparita.ktorcheck.R
+import com.eparita.ktorcheck.navigation.Screen
 import com.eparita.ktorcheck.ui.theme.Purple500
 import com.eparita.ktorcheck.ui.theme.Purple700
 
 
 @Composable
-fun SplashScreen(navHostController: NavHostController) {
+fun SplashScreen(
+    navHostController: NavHostController,
+    splashViewModel: SplashViewModel = hiltViewModel()
+) {
+    val onBoardingCompleted by splashViewModel.onBoardingCompleted.collectAsState()
     val degree = remember { Animatable(0f) }
     LaunchedEffect(key1 = true) {
         degree.animateTo(
@@ -36,6 +40,12 @@ fun SplashScreen(navHostController: NavHostController) {
                 delayMillis = 200
             )
         )
+        navHostController.popBackStack()
+        if (onBoardingCompleted) {
+            navHostController.navigate(Screen.Home.route)
+        } else {
+            navHostController.navigate(Screen.Welcome.route)
+        }
     }
     Splash(degree = degree.value)
 }
@@ -49,7 +59,7 @@ fun Splash(degree: Float) {
                 .fillMaxSize(), contentAlignment = Alignment.Center
         ) {
             Image(
-                modifier= Modifier.rotate(degree),
+                modifier = Modifier.rotate(degree),
                 painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = stringResource(R.string.app_logo)
             )
@@ -62,7 +72,7 @@ fun Splash(degree: Float) {
             contentAlignment = Alignment.Center
         ) {
             Image(
-                modifier= Modifier.rotate(degree),
+                modifier = Modifier.rotate(degree),
                 painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = stringResource(R.string.app_logo)
             )

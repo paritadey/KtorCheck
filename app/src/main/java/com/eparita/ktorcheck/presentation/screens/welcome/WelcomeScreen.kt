@@ -17,17 +17,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.eparita.ktorcheck.R
 import com.eparita.ktorcheck.domain.model.OnBoardingPage
+import com.eparita.ktorcheck.navigation.Screen
 import com.eparita.ktorcheck.ui.theme.*
+import com.eparita.ktorcheck.util.Constants.LAST_ON_BOARDING_PAGE
 import com.eparita.ktorcheck.util.Constants.ON_BOARDING_PAGE_COUNT
 import com.google.accompanist.pager.*
 
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
 @Composable
-fun WelcomeScreen(navHostController: NavHostController) {
+fun WelcomeScreen(
+    navHostController: NavHostController,
+    welcomeViewModel: WelcomeViewModel = hiltViewModel()
+) {
     val pages = listOf(
         OnBoardingPage.First,
         OnBoardingPage.Second,
@@ -59,7 +65,11 @@ fun WelcomeScreen(navHostController: NavHostController) {
         )
         FinishButton(
             modifier = Modifier.weight((1f)), pagerState = pagerState
-        ) {}
+        ) {
+            navHostController.popBackStack()
+            navHostController.navigate(Screen.Home.route)
+            welcomeViewModel.saveOnBoardingState(completed = true)
+        }
     }
 }
 
@@ -75,7 +85,7 @@ fun FinishButton(modifier: Modifier, pagerState: PagerState, onClick: () -> Unit
     ) {
         AnimatedVisibility(
             modifier = Modifier.fillMaxWidth(),
-            visible = pagerState.currentPage == 2
+            visible = pagerState.currentPage == LAST_ON_BOARDING_PAGE
         ) {
             Button(
                 onClick = onClick, colors = ButtonDefaults.buttonColors(
