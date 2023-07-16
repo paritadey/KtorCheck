@@ -1,6 +1,10 @@
 package com.eparita.ktorcheck.di
 
+import androidx.paging.ExperimentalPagingApi
+import com.eparita.ktorcheck.data.local.BorutoDatabase
 import com.eparita.ktorcheck.data.remote.BorutoApi
+import com.eparita.ktorcheck.data.repository.RemoteDataSourceImpl
+import com.eparita.ktorcheck.domain.repository.RemoteDataSource
 import com.eparita.ktorcheck.util.Constants.BASE_URL
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -16,6 +20,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
+@ExperimentalPagingApi
 @ExperimentalSerializationApi
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -43,5 +48,14 @@ object NetworkModule {
     @Singleton
     fun provideBorutoApi(retrofit: Retrofit): BorutoApi {
         return retrofit.create(BorutoApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoteDataSource(
+        borutoApi: BorutoApi,
+        borutoDatabase: BorutoDatabase
+    ): RemoteDataSource {
+        return RemoteDataSourceImpl(borutoApi, borutoDatabase)
     }
 }

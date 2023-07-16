@@ -2,6 +2,7 @@ package com.eparita.ktorcheck.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.eparita.ktorcheck.data.local.BorutoDatabase
 import com.eparita.ktorcheck.util.Constants.BORUTO_DATABASE
 import dagger.Module
@@ -17,9 +18,11 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
-        context,
-        BorutoDatabase::class.java,
-        BORUTO_DATABASE,
-    ).build()
+    fun provideDatabase(@ApplicationContext context: Context): BorutoDatabase {
+        return Room.databaseBuilder(
+            context,
+            BorutoDatabase::class.java,
+            BORUTO_DATABASE,
+        ).build()
+    }
 }
